@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def ht_activation(x):
+def ht_activation(x: np.array) -> float:
     """Hyperbolic tangent activation function. Normalizes neurons output between 1 and 0."""
 
     result = 2/(1 + np.exp(-x)) - 1
@@ -9,15 +9,13 @@ def ht_activation(x):
     return result
 
 
-def df(x):
-    return 0.5*(1 + x)*(1 - x)
+def derivative_of_activation(x: int or float) -> float:
+    result = 0.5*(1 + x)*(1 - x)
+
+    return result
 
 
-input_weights = np.array([[-0.2, 0.3, -0.4], [0.1, -0.3, -0.4]])
-hidden_weights = np.array([0.2, 0.3])
-
-
-def go_forward(input_data: tuple[int, int, int]):
+def go_forward(input_data: tuple[int, int, int]) -> tuple[float, np.array]:
     """Launches NN in regular way. Except – returns not only result but signals to hidden layer as well.
 
     Args:
@@ -37,24 +35,35 @@ def go_forward(input_data: tuple[int, int, int]):
 def train(input_data):
     global hidden_weights, input_weights
 
-    count = len(input_data)
+    input_data_len = len(input_data)
     for k in range(training_circles):
-        x = input_data[np.random.randint(0, count)]  # случайный выбор входного сигнала из обучающей выборки
-        y, out = go_forward(x[0:3])             # прямой проход по НС и вычисление выходных значений нейронов
-        e = y - x[-1]                           # Error
-        delta = e*df(y)                         # Local gradient
-        neuron_0_weight_correction = lambda_ * delta * out[0]
-        neuron_1_weight_correction = lambda_ * delta * out[1]
+        # Selecting random input data from training set
+        x = input_data[np.random.randint(0, input_data_len)]
+        correct_result = x[-1]
+        input_set = x[0:3]
 
-        # Correcting weights of the hidden neurons,
+        # Launching NN as usual
+        result, hidden_layer_results = go_forward(x[0:3])
+
+        error = result - correct_result
+
+        # Local gradient and correction values for hidden neurons weights ('hidden -> output layer' connection)
+        delta = error*derivative_of_activation(result)
+        neuron_0_weight_correction = lambda_ * delta * hidden_layer_results[0]
+        neuron_1_weight_correction = lambda_ * delta * hidden_layer_results[1]
+
+        # Correcting weights of the hidden_neurons->output_layer connection
         hidden_weights[0] -= neuron_0_weight_correction    # Hidden weight #1 correction
         hidden_weights[1] -= neuron_1_weight_correction    # Hidden weight #2 correction
 
-        delta2 = hidden_weights * delta * df(out)               # вектор из 2-х величин локальных градиентов
+        # Correcting weights of the input_layer->hidden_layer connection
+        # Vector of 2 values of local gradients
+        delta2 = hidden_weights * delta * derivative_of_activation(hidden_layer_results)
+        input_layer_correction_0 = np.array(input_set) * delta2[0] * lambda_
+        input_layer_correction_1 = np.array(input_set) * delta2[1] * lambda_
 
-        # корректировка связей первого слоя
-        input_weights[0, :] = input_weights[0, :] - np.array(x[0:3]) * delta2[0] * lambda_
-        input_weights[1, :] = input_weights[1, :] - np.array(x[0:3]) * delta2[1] * lambda_
+        input_weights[0, :] = input_weights[0, :] - input_layer_correction_0
+        input_weights[1, :] = input_weights[1, :] - input_layer_correction_1
 
 
 # Training sample (aka full sample)
@@ -71,10 +80,13 @@ lambda_ = 0.01
 # Learning cycles. Aka, how many learning iterations there would be
 training_circles = 100000
 
+# Weights
+input_weights = np.array([[-0.2, 0.3, -0.4], [0.1, -0.3, -0.4]])
+hidden_weights = np.array([0.2, 0.3])
+
 train(training_set)
 
-# Che
 for case in training_set:
     input_from_training_set = case[0:3]
-    y, out = go_forward(input_from_training_set)
-    print(f"Выходное значение НС: {y} => {case[-1]}")
+    nn_result, _ = go_forward(input_from_training_set)
+    print(f"Trained result: {nn_result}; Correct result: {case[-1]}")
