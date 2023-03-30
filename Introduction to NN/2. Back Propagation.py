@@ -10,6 +10,8 @@ def ht_activation(x: np.array) -> float:
 
 
 def derivative_of_activation(x: int or float) -> float:
+    """The purpose of this function is to provide a smooth gradient"""
+
     result = 0.5*(1 + x)*(1 - x)
 
     return result
@@ -47,16 +49,16 @@ def train(input_data):
 
         error = result - correct_result
 
-        # Local gradient and correction values for hidden neurons weights ('hidden -> output layer' connection)
-        delta = error*derivative_of_activation(result)
+        # Local gradient and values correction for hidden neurons weights ('hidden -> output layer' connection)
+        delta = error * derivative_of_activation(result)
         neuron_0_weight_correction = lambda_ * delta * hidden_layer_results[0]
         neuron_1_weight_correction = lambda_ * delta * hidden_layer_results[1]
 
-        # Correcting weights of the hidden_neurons->output_layer connection
+        # Correcting weights of the 'hidden_neurons -> output_layer' connection
         hidden_weights[0] -= neuron_0_weight_correction    # Hidden weight #1 correction
         hidden_weights[1] -= neuron_1_weight_correction    # Hidden weight #2 correction
 
-        # Correcting weights of the input_layer->hidden_layer connection
+        # Correcting weights of the 'input_layer -> hidden_layer' connection
         # Vector of 2 values of local gradients
         delta2 = hidden_weights * delta * derivative_of_activation(hidden_layer_results)
         input_layer_correction_0 = np.array(input_set) * delta2[0] * lambda_
