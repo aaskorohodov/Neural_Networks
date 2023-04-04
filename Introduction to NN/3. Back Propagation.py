@@ -132,8 +132,8 @@ def train(input_data):
         # Correcting weights of the 'hidden_neurons -> output_layer' connection
         hidden_weights[0] -= neuron_0_weight_correction    # Hidden weight #1 correction
         hidden_weights[1] -= neuron_1_weight_correction    # Hidden weight #2 correction
-        if k % 100 == 0:
-            print(error, derivative_of_activation(nn_result))
+        # if k % 100 == 0:
+        #     print(error, derivative_of_activation(nn_result))
 
         # Correcting weights of the 'input_layer -> hidden_layer' connection
         # Vector of 2 values of local gradients
