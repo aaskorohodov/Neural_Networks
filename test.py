@@ -1,32 +1,23 @@
+import random
+
 import numpy as np
-import matplotlib.pyplot as plt
 
-N = 5
-b = 3
+prices = [random.randint(1, 10000) for _ in range(10000)]
+extreme_prices = [random.randint(10000, 1000000) for _ in range(10)]
+for el in extreme_prices:
+    prices.append(el)
 
-x1 = np.random.random(N)
-x2 = x1 + [np.random.randint(10)/10 for i in range(N)] + b
-C1 = [x1, x2]
+# Sort the prices
+prices.sort()
 
-x1 = np.random.random(N)
-x2 = x1 - [np.random.randint(10)/10 for i in range(N)] - 0.1 + b
-C2 = [x1, x2]
+# Calculate the price difference between adjacent products
+price_diffs = [prices[i+1] - prices[i] for i in range(len(prices)-1)]
 
-f = [0+b, 1+b]
+# Define a threshold for price difference
+threshold = np.percentile(prices, 99)
 
-w2 = 0.5
-w3 = -b*w2
-w = np.array([-w2, w2, w3])
-for i in range(N):
-    x = np.array([C1[0][i], C1[1][i], 1])
-    y = np.dot(w, x)
-    if y >= 0:
-        print("Класс C1")
-    else:
-        print("Класс C2")
+# Filter out the products where the price difference is below the threshold
+selected_products = [(prices[i], prices[i+1]) for i in range(len(prices)-1) if price_diffs[i] >= threshold]
 
-plt.scatter(C1[0][:], C1[1][:], s=10, c='red')
-plt.scatter(C2[0][:], C2[1][:], s=10, c='blue')
-plt.plot(f)
-plt.grid(True)
-plt.show()
+# Print the selected products
+print(selected_products)
