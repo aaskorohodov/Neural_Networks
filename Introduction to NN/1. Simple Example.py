@@ -1,8 +1,10 @@
+"""
+Simple Neural Network. Receives 3 input signals and returns 1 output signal in the form of 1 or 0.
+Fully Connected Neural Network with Step Activation Function.
+"""
+
+
 import numpy as np
-
-
-"""Simple Neural Network. Receives 3 input signals and returns 1 output signal in the form of 1 or 0.
-Fully Connected Neural Network with Step Activation Function."""
 
 
 def activation(x) -> 1 | 0:
@@ -21,14 +23,20 @@ def activation(x) -> 1 | 0:
 def neural_network(s_1: int, s_2: int, s_3: int) -> 1 | 0:
     """Represents a simple Neural Network, made with 3 layers (input, hidden, output).
 
-    Input layer consists of 3 neurons. Each neuron connected to 2 neurons of the hidden layer, and has a weight for
+    Input layer
+    ~~~~~~~~~~~~~
+    Input layer consists of 3 neurons. Each neuron is connected to 2 neurons of the hidden layer, and has a weight for
     each connection. This layer has no activation threshold, it simply multiply inputs on its weigh, and 'sends' signal
     to the next neuron.
 
+    Hidden layer
+    ~~~~~~~~~~~~~
     Hidden layer consists of 2 neurons. Both connected to the single output neuron in the output layer. Each connection
     has its weight as well. Each connection here has an activation threshold, which will be calculated after weights are
     applied. If the threshold is not exceeded – neuron sends 0, otherwise it sends 1.
 
+    Output neuron
+    ~~~~~~~~~~~~~
     Output neuron receives 2 signals, each represented as integer. It sums them into 1 value and checks it for
     activation threshold, which forms the result – 1 or 0.
 
@@ -51,7 +59,7 @@ def neural_network(s_1: int, s_2: int, s_3: int) -> 1 | 0:
     hidden_layer_output = np.array([activation(x) for x in input_layer_outputs])
     print(f'Hidden layer result signals: {hidden_layer_output}')
 
-    output_layer_input = np.dot(hidden_layer_weights, hidden_layer_output)
+    output_layer_input = np.dot(hidden_layer_weights, hidden_layer_output)  # int, as arrays are 1D
     output_layer_output = activation(output_layer_input)
     print(f'Output value of NN: {output_layer_output}')
 

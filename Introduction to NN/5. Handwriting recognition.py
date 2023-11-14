@@ -38,7 +38,9 @@ we need is to turn each correct answer from y_train and y_test into such vector:
     ...
 
 For that purpose, there is a method right inside keras. Here, the last param (10) is a size of each vector"""
+# noinspection PyUnresolvedReferences
 y_train_cat = keras.utils.to_categorical(y_train, 10)
+# noinspection PyUnresolvedReferences
 y_test_cat = keras.utils.to_categorical(y_test, 10)
 
 # Printin first 25 images from training set

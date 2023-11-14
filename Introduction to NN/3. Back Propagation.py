@@ -1,13 +1,12 @@
-import numpy as np
-
-
-"""This is a basic example of BackPropagation – a process of teaching NN, by calculation overall error of NN's putput,
+"""
+This is a basic example of BackPropagation – a process of teaching NN, by calculation overall error of NN's output,
 and modifying weights of those neurons, that are responsible for that error more.
 
         Error
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In this example, there is 1 neuron in the putput layer, which output is normalized between -1 and 1 (it returns float).
-The goal of this NN is to indicate, if some input-data if good or bad, in other words – to sort input-data in 1 of 2
+In this example, there is 1 neuron in the output layer, its output is normalized between -1 and 1 (returns a float).
+The goal of this NN is to indicate, if some input-data is good or bad, in other words – to sort input-data in 1 of 2
 categories.
 
 The error is simply the difference between expected and actual results. For example:
@@ -15,58 +14,69 @@ The error is simply the difference between expected and actual results. For exam
     input-data -> result == -1
     expected_result == 1
     error = 1 - (-1) == 2 (big error)
-    
+
     input-data -> result == -1
     expected_result == -1
     error = -1 - (-1) == 0 (no error)
-    
+
     input-data -> result == 0.7
     expected_result == 1
     error = 0.7 - 1 == 0.3 (small error)
-    
+
         Activation function
-        
-Hyperbolic tangent activation function is used as an activation function. It normalizes each neuron's output from 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Hyperbolic tangent activation function is used as an activation function. It normalizes each neuron's output from
 -1 to 1. Normalization is required, NOT to get very strong signals from some neurons, which in practice will result in
 unpredictable response from NN and will make learning harder and longer.
 
         Derivative of activation
-    
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Derivative of the activation function indicates, how much the change of the input will affect function's result. For
 example, if a function's derivative is 100500, than a small change (for example, change in the input by 1) will result
-in the output changes by 100500. This means that this specific argument (there may be several arguments), in the value
+in the output change by 100500. This means that this specific argument (there may be several arguments), in the value
 that this argument is right now, will result in a huge change of the output, if this argument will be changed.
 
 Derivative of activation is used in NN, to get understanding about how much should we modify weight of a specific
-connection. The bigger derivative is – the stronger its affect on the overall result will be, and the more we will
+connection. The bigger derivative is – the stronger its effect on the overall result will be, and the more we will
 change that weight.
 
         BackPropagation, the essence
-        
-BackPropagation begins from the last neuron, for which we calculates the error. After we do so, we can then get the
-idea, of which inputs played the most part in that error. For example, on of 2 inputs may have a big weight and its
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+BackPropagation begins from the last neuron, for which we calculate the error. After we do so, we can then get the
+idea, of which inputs played the most in that error. For example, one of 2 inputs may have a big weight and its
 input is big (0.9), while the second one has low weight and a very small input (0.001). This will lead us to the first
 neuron, which played the most role in the overall error. This neuron's weight will be modified significantly more,
 then weight of another neuron, which makes sense – 'you generated the most part of the error, so your weight will be
 modified more'.
 
-Than, all we have to do, is keep traveling backwards from the last to the first, layer by layer, keeping in mind the
+Then, all we have to do, is keep traveling backwards from the last to the first, layer by layer, keeping in mind the
 overall error, that NN made. Having this error, we will keep calculating derivative of activation to each neuron, and
-the the contribution of each to the overall NN result. This means that for each neuron we will not only get the idea,
+the contribution of each to the overall NN result. This means that for each neuron we will not only get the idea,
 of now much this exact neuron contributed to the error, but also we will understand, how much this neuron will react
-to the change in the input. If some neuron will react a lot and it made big contribution – its weights will be modified
+to the change in the input. If some neuron will react a lot, and it made big contribution – its weights will be modified
 more.
 
 This is the essence of BackPropagation – we are getting from the last neuron to the first one, and modifying weight
-of those connections, who contributed more to the overall error, and making this modification more, the higher 
+of those connections, which contributed more to the overall error, and making this modification more, the higher
 overall error is. This 2 rules help us with:
 
     1. NOT modify weights/make very small changes, if the error is small or if there is no error
-    2. Modify weights of those connections, which are responsible more for the error"""
+    2. Modify weights of those connections, which are responsible more for the error
+"""
 
 
-def ht_activation(x: np.float64) -> float:
-    """Hyperbolic tangent activation function. Normalizes neurons output between 1 and 0."""
+import numpy as np
+from typing import NewType
+
+
+FloatZeroToOne = NewType('FloatZeroToOne', float)
+
+
+def ht_activation(x: np.float64) -> FloatZeroToOne:
+    """Hyperbolic tangent activation function. Normalizes neurons output between 0 and 1."""
 
     res = 2/(1 + np.exp(-x)) - 1
 
@@ -80,7 +90,7 @@ def derivative_of_activation(x: np.float64 or np.array) -> float:
     input.
 
     Args:
-        x: neuron output, neurons activation. One or 2 values (one neuron ore several)
+        x: neuron output, neurons activation. One or 2 values (one neuron or several)
     Returns:
         derivative of activation function"""
 
@@ -111,7 +121,7 @@ def train(input_data):
     global hidden_weights, input_weights
 
     input_data_len = len(input_data)
-    for k in range(training_circles):
+    for k in range(training_cycles):
         # Selecting random input data from training set
         x = input_data[np.random.randint(0, input_data_len)]
         correct_result = x[-1]
@@ -157,9 +167,9 @@ training_set = [(-1, -1, -1, -1),
 # Learning rate
 learning_rate = 0.01
 # Learning cycles. Aka, how many learning iterations there would be
-training_circles = 100000
+training_cycles = 100000
 
-# Weights
+# Weights, randomly selected as some initial weights
 input_weights = np.array([[-0.2, 0.3, -0.4], [0.1, -0.3, -0.4]])
 hidden_weights = np.array([0.2, 0.3])
 
